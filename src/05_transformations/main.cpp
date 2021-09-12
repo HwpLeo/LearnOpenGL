@@ -3,6 +3,10 @@
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 
 #include <iostream>
 
@@ -11,7 +15,7 @@
 const int window_w = 800;
 const int window_h = 600;
 const char* window_name = "LearnOpenGL";
-const std::string pre_fix = "./src/04_texture/";
+const std::string pre_fix = "./src/05_transformations/";
 
 float vertices[] = {
      0.5f,  0.5f, 0.0f,     1.0f, 0.0f, 0.0f,   1.0f, 1.0f,
@@ -33,13 +37,22 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void process_input(GLFWwindow *window);
 // 加载纹理
 void load_texture(char* path, unsigned int* texture);
-std::string get_path(std::string local);
-
 unsigned int create_shader(const char* vertex, const char* fragment);
 void create_vertex_data(unsigned int* VAO, unsigned int* EBO, unsigned int* VBO);
 
+void test_glm();
+
+/**********************************/
+/*          Util Function         */
+/**********************************/
+std::string get_path(std::string local);
+void dump(glm::vec4 vec);
+
+
 int main()
 {
+    test_glm();
+
     setup_opengl();
 
     GLFWwindow* window = glfwCreateWindow(window_w, window_h, window_name, NULL, NULL);
@@ -72,6 +85,11 @@ int main()
     shader.use();
     glUniform1i(glGetUniformLocation(shader.ID, "texture1"), 0);
     shader.setInt("texture2", 1);
+    unsigned int trans_loc = glGetUniformLocation(shader.ID, "trans");
+    // glm::mat4 trans = glm::mat4(1.0f);
+    // trans = glm::translate(trans, glm::vec3(0.5, 0.5, 0.5));
+    // trans = glm::rotate(trans, glm::radians(90.0f), glm::vec3(0.0, 0.0, 1.0));
+    // glUniformMatrix4fv(trans_loc, 1, GL_FALSE, glm::value_ptr(trans));
     
 
     unsigned int VAO, EBO, VBO;
@@ -94,6 +112,13 @@ int main()
         shader.use();
         float mixer = (sinf(glfwGetTime()) + 1) * 0.25;
         shader.setFloat("mixer", mixer);
+
+
+        glm::mat4 trans = glm::mat4(1.0f);
+        trans = glm::translate(trans, glm::vec3(0.5, -0.5, 0));
+        trans = glm::rotate(trans, (float)glfwGetTime(), glm::vec3(0, 0, 1));
+        glUniformMatrix4fv(trans_loc, 1, GL_FALSE, glm::value_ptr(trans));
+
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
         glfwSwapBuffers(window);
@@ -232,4 +257,21 @@ void process_input(GLFWwindow *window)
 std::string get_path(std::string local)
 {
     return pre_fix + local;
+}
+
+
+void dump(glm::vec4 vec)
+{
+    std::cout << "( " << vec.x << ", " << vec.y << ", " << vec.z << " )" << std::endl;
+}
+
+void test_glm()
+{
+    glm::vec4 vec(1.0f, 0.0f, 0.0f, 1.0f);
+    glm::mat4 trans = glm::mat4(1.0);
+    // trans = glm::translate(trans, glm::vec3(1.0, 1.0f, 0.0f));
+    trans = glm::rotate(trans, glm::radians(90.0f), glm::vec3(0.0, 0.0, 1));
+    trans = glm::scale(trans, glm::vec3(0.5, 0.5, 0.5));
+    vec = trans * vec;
+    dump(vec);
 }
