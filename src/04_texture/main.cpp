@@ -32,7 +32,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 // 输入处理
 void process_input(GLFWwindow *window);
 // 加载纹理
-void load_texture(unsigned int* texture);
+void load_texture(char* path, unsigned int* texture);
 std::string get_path(std::string local);
 
 unsigned int create_shader(const char* vertex, const char* fragment);
@@ -61,11 +61,19 @@ int main()
     // 告诉GLFW每当窗口调整大小的时候调整viewport大小
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
-    unsigned int texture;
-    load_texture(&texture);
+    stbi_set_flip_vertically_on_load(true); 
+    unsigned int texture1, texture2;
+    load_texture("image/container.jpg", &texture1);
+    load_texture("image/awesomeface.png", &texture2);
 
     Shader shader(get_path("shader/sample.vert").c_str(), 
         get_path("shader/sample.frag").c_str());
+
+    shader.use();
+    glUniform1i(glGetUniformLocation(shader.ID, "texture1"), 0);
+    shader.setInt("texture2", 1);
+    
+
     unsigned int VAO, EBO, VBO;
     create_vertex_data(&VAO, &EBO, &VBO);
 
@@ -78,7 +86,12 @@ int main()
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
         
-        glBindTexture(GL_TEXTURE_2D, texture);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, texture1);
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, texture2);
+        // glUniform1i(glGetUniformLocation(shader.ID, "texture1"), texture1);
+        // glUniform1i(glGetUniformLocation(shader.ID, "texture2"), texture2);
         glBindVertexArray(VAO);
         shader.use();
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
@@ -97,11 +110,11 @@ int main()
     return 0;
 }
 
-void load_texture(unsigned int* texture)
+void load_texture(char* path, unsigned int* texture)
 {
 
     int width, height, nrChannels;
-    unsigned char* data = stbi_load(get_path("image/container.jpg").c_str(), &width, &height, &nrChannels, 0);
+    unsigned char* data = stbi_load(get_path(path).c_str(), &width, &height, &nrChannels, 0);
     if (!data)
     {
         std::cout << "Failed to load texture" << std::endl;
@@ -117,7 +130,16 @@ void load_texture(unsigned int* texture)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+    GLenum format;
+    if (nrChannels == 3)
+    {
+        format = GL_RGB;
+    }
+    else
+    {
+        format = GL_RGBA;
+    }
+    glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
     glGenerateMipmap(GL_TEXTURE_2D);
     stbi_image_free(data);
 }
