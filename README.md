@@ -17,12 +17,12 @@
 
 
 
-- [ ] Getting started
-    - [ ] OpenGL
-    - [ ] Creating a window
-    - [ ] Hello Window
-    - [ ] Hello Triangle
-    - [ ] Shaders
+- [x] Getting started
+    - [x] OpenGL
+    - [x] Creating a window
+    - [x] Hello Window
+    - [x] Hello Triangle
+    - [x] Shaders
     - [ ] Textures
     - [ ] Transformations
     - [ ] Coordinate Systems
@@ -36,3 +36,19 @@
     - [ ] Light casters
     - [ ] Multiple lights
     - [ ] Review
+- [ ] Model Loading
+    - [ ] Assimp
+    - [ ] Mesh
+    - [ ] Model
+- [ ] Advanced OpenGL
+    - [ ] Depth testing
+    - [ ] Stencil testing
+    - [ ] Blending
+    - [ ] Face culling
+    - [ ] Framebuffers
+    - [ ] Cubemaps
+    - [ ] Advanced Data
+    - [ ] Advanced GLSL
+    - [ ] Geometry Shader
+    - [ ] Instancing
+    - [ ] Anti Aliasing
