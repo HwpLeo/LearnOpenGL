@@ -25,12 +25,12 @@
     - [x] Shaders
     - [x] Textures
     - [x] Transformations
-    - [ ] Coordinate Systems
-    - [ ] Camera
-    - [ ] Review
+    - [x] Coordinate Systems
+    - [x] Camera
+    - [x] Review
 - [ ] Lighting
-    - [ ] Colors
-    - [ ] Basic Lighting
+    - [x] Colors
+    - [x] Basic Lighting
     - [ ] Materials
     - [ ] Lighting maps
     - [ ] Light casters
